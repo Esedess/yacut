@@ -1,28 +1,25 @@
 from flask import abort, flash, redirect, render_template, request
 
 from . import app, db
-from .constants import NOT_UNIQUE_LINK_MESSAGE, SHORT_ID_LENGTH
+from .constants import NOT_UNIQUE_LINK_MESSAGE
 from .forms import URLForm
 from .models import URLMap
-from .utils import get_unique_short_id
 
 
 @app.route('/', methods=('GET', 'POST'))
 def index_view():
     form = URLForm()
     if form.validate_on_submit():
+        original_link = form.original_link.data
         custom_id = form.custom_id.data
-        if not custom_id:
-            custom_id = get_unique_short_id(SHORT_ID_LENGTH)
-        else:
+        if custom_id:
             if URLMap.query.filter_by(short=custom_id).first():
                 flash(NOT_UNIQUE_LINK_MESSAGE.format(custom_id), 'error')
                 return render_template('index.html', form=form)
 
-        url_map = URLMap(
-            original=form.original_link.data,
-            short=custom_id,
-        )
+        data = {'url': original_link, 'custom_id': custom_id}
+        url_map = URLMap()
+        url_map.from_dict(data)
         db.session.add(url_map)
         db.session.commit()
         flash(request.root_url + url_map.short, 'short_link')
