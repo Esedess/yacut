@@ -10,7 +10,7 @@ class URLForm(FlaskForm):
     original_link = URLField(
         'Длинная ссылка',
         validators=(DataRequired(message='Обязательное поле'),
-                    Length(1, 256))
+                    Length(1))
     )
     custom_id = StringField(
         'Ваш вариант короткой ссылки',

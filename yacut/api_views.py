@@ -1,4 +1,5 @@
 import re
+from http import HTTPStatus
 
 from flask import jsonify, request
 
@@ -27,7 +28,8 @@ def add_url():
 
     if custom_id:
         if len(custom_id) > 16:
-            raise InvalidAPIUsage(REQUEST_INV_CUSTOM_ID_MESSAGE, 400)
+            raise InvalidAPIUsage(
+                REQUEST_INV_CUSTOM_ID_MESSAGE, HTTPStatus.BAD_REQUEST)
         if URLMap.query.filter_by(short=custom_id).first() is not None:
             raise InvalidAPIUsage(
                 REQUEST_UNIQUE_CUSTOM_ID_MESSAGE.format(custom_id)
@@ -40,12 +42,13 @@ def add_url():
     db.session.add(url_map)
     db.session.commit()
 
-    return jsonify(url_map.to_dict(request.root_url)), 201
+    return jsonify(url_map.to_dict(request.root_url)), HTTPStatus.CREATED
 
 
 @app.route('/api/id/<short_id>/', methods=('GET',))
 def get_url(short_id):
     url_map = URLMap.query.filter_by(short=short_id).first()
     if url_map is None:
-        raise InvalidAPIUsage(REQUEST_INV_SHORT_ID_MESSAGE, 404)
-    return jsonify({'url': url_map.get_original_url()}), 200
+        raise InvalidAPIUsage(
+            REQUEST_INV_SHORT_ID_MESSAGE, HTTPStatus.NOT_FOUND)
+    return jsonify({'url': url_map.get_original_url()}), HTTPStatus.OK

@@ -1,4 +1,4 @@
-from flask import abort, flash, redirect, render_template, request
+from flask import flash, redirect, render_template, request
 
 from . import app, db
 from .constants import NOT_UNIQUE_LINK_MESSAGE
@@ -28,8 +28,6 @@ def index_view():
 
 @app.route('/<short_url>')
 def original_url_redirect_view(short_url):
-    url_map = URLMap.query.filter_by(short=short_url).first()
-    if not url_map:
-        abort(404)
+    url_map = URLMap.query.filter_by(short=short_url).first_or_404()
     redirect_url = url_map.get_original_url()
-    return redirect(redirect_url, code=302)
+    return redirect(redirect_url)
