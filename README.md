@@ -9,7 +9,7 @@
 Клонировать репозиторий и перейти в него в командной строке:
 
 ```bash
-git clone https://github.com/KapkaDibab/yacut
+git clone https://github.com/Esedess/yacut
 ```
 
 ```bash
@@ -70,4 +70,4 @@ flask run
 ## Авторы
 
 - [@yandex-praktikum](https://github.com/yandex-praktikum)
-- [@KapkaDibab](https://github.com/KapkaDibab)
+- [@Esedess](https://github.com/Esedess)
